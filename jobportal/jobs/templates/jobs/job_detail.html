@@ -1,0 +1,48 @@
+{% extends 'jobs/base.html' %}
+
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ job.title }}</h1>
+            <h4 class="card-subtitle mb-3 text-muted">{{ job.company.name }}</h4>
+            
+            <div class="mb-3">
+                <span class="badge bg-primary me-2">{{ job.get_job_type_display }}</span>
+                <span class="badge bg-secondary">{{ job.location }}</span>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Job Description</h5>
+                <p class="card-text">{{ job.description|linebreaks }}</p>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Requirements</h5>
+                <p class="card-text">To be added to the Job model in future enhancements.</p>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Posted on {{ job.posted_date|date:"F d, Y" }}</small>
+                <small class="text-muted">Closes on {{ job.closing_date|date:"F d, Y" }}</small>
+            </div>
+        </div>
+        
+        <div class="card-footer">
+            {% if user.is_authenticated %}
+                {% if user.jobseeker %}
+                    {% if has_applied %}
+                        <button class="btn btn-success" disabled>Already Applied</button>
+                    {% else %}
+                        <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
+                    {% endif %}
+                {% elif user.company and user.company == job.company %}
+                    <a href="#" class="btn btn-secondary">View Applications</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}?next={{% url 'job_detail' job.id %}" class="btn btn-primary">Login to Apply</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
