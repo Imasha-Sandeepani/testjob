@@ -9,8 +9,14 @@ from .forms import (UserRegisterForm, CompanyRegisterForm,
 
 
 def home(request):
-    jobs = Job.objects.filter(is_active=True).order_by('-posted_date')[:10]
-    return render(request, 'jobs/home.html', {'jobs': jobs})
+    jobs = Job.objects.filter(is_active=True).order_by('-posted_date')
+    context = {
+        'jobs': jobs,
+        'total_companies': Company.objects.count(),
+        'total_jobseekers': JobSeeker.objects.count(),
+        'total_jobs': Job.objects.count(),
+    }
+    return render(request, 'jobs/home.html', context)
 
 
 def register(request):
@@ -134,7 +140,37 @@ def logout_view(request):
     return render(request, 'jobs/logout.html')
 
 
+@login_required
+def view_applications(request, job_id):
+    job = get_object_or_404(Job, id=job_id, company=request.user.company)
+    applications = Application.objects.filter(job=job).select_related('applicant__user').order_by('-applied_date')
 
+    if request.method == 'POST':
+        application_id = request.POST.get('application_id')
+        new_status = request.POST.get('status')
+        if application_id and new_status:
+            application = get_object_or_404(Application, id=application_id, job=job)
+            application.status = new_status
+            application.save()
+            messages.success(request, 'Application status updated successfully!')
+            return redirect('view_applications', job_id=job.id)
+
+    return render(request, 'jobs/view_applications.html', {
+        'job': job,
+        'applications': applications
+    })
+
+
+@login_required
+def delete_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, company=request.user.company)
+
+    if request.method == 'POST':
+        job.delete()
+        messages.success(request, 'Job post deleted successfully!')
+        return redirect('dashboard')
+
+    return render(request, 'jobs/confirm_delete_job.html', {'job': job})
 
 
 

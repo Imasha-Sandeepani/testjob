@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from .views import logout_view
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -11,7 +10,10 @@ urlpatterns = [
     path('job/<int:job_id>/apply/', views.apply_job, name='apply_job'),
     path('post-job/', views.post_job, name='post_job'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('logout/', logout_view, name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path('login/', auth_views.LoginView.as_view(template_name='jobs/login.html'), name='login'),
+    path('job/<int:job_id>/applications/', views.view_applications, name='view_applications'),
+    path('job/<int:job_id>/delete/', views.delete_job, name='delete_job'),
+
 
 ]
