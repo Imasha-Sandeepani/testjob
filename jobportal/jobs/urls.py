@@ -14,6 +14,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='jobs/login.html'), name='login'),
     path('job/<int:job_id>/applications/', views.view_applications, name='view_applications'),
     path('job/<int:job_id>/delete/', views.delete_job, name='delete_job'),
-
+    path('application/edit/<int:application_id>/', views.edit_application, name='edit_application'),
+    path('application/delete/<int:application_id>/', views.delete_application, name='delete_application'),
+    path('job/edit/<int:job_id>/', views.edit_job, name='edit_job'),
 
 ]

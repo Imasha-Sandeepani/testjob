@@ -173,6 +173,48 @@ def delete_job(request, job_id):
     return render(request, 'jobs/confirm_delete_job.html', {'job': job})
 
 
+@login_required
+def edit_application(request, application_id):
+    application = get_object_or_404(Application, id=application_id, applicant=request.user.jobseeker)
+
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, instance=application)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = ApplicationForm(instance=application)
+
+    return render(request, 'jobs/edit_application.html', {
+        'form': form,
+        'application': application
+    })
 
 
+@login_required
+def delete_application(request, application_id):
+    application = get_object_or_404(Application, id=application_id, applicant=request.user.jobseeker)
 
+    if request.method == 'POST':
+        application.delete()
+        return redirect('dashboard')
+
+    return render(request, 'jobs/confirm_application_delete.html', {'application': application})
+
+
+@login_required
+def edit_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, company=request.user.company)
+
+    if request.method == 'POST':
+        form = JobForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = JobForm(instance=job)
+
+    return render(request, 'jobs/edit_job.html', {
+        'form': form,
+        'job': job
+    })
