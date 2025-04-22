@@ -9,17 +9,22 @@
                 url('{% static 'jobs/images/jobs.jpg' %}');
                 background-size: cover;
                 background-position: center;
-                background-repeat: no-repeat;">
-    <div class="container py-5">
-        <h1 class="display-4 fw-bold mb-4">Find Your Dream Job Today</h1>
-        <p class="lead mb-5">Connecting talented professionals with top employers worldwide.</p>
+                background-repeat: no-repeat;
+                margin-left: calc(-50vw + 50%);
+                margin-right: calc(-50vw + 50%);
+                width: 100vw;">
+    <div class="container-fluid py-5 px-0">
+        <div class="mx-auto" style="max-width: 1200px; padding: 0 15px;">
+            <h1 class="display-4 fw-bold mb-4">Find Your Dream Job Today</h1>
+            <p class="lead mb-5">Connecting talented professionals with top employers worldwide.</p>
 
-        {% if not user.is_authenticated %}
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Login</a>
-            <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-4">Register</a>
+            {% if not user.is_authenticated %}
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-4">Register</a>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </section>
 
@@ -41,36 +46,65 @@
 </section>
 
 
-    <h1 class="mb-4">Latest Job Openings</h1>
-    
-    <div class="row">
-        {% for job in jobs %}
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ job.title }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company.name }}</h6>
-                        <p class="card-text">{{ job.description|truncatewords:30 }}</p>
-                        <span class="badge bg-primary">{{ job.get_job_type_display }}</span>
-                        <span class="badge bg-secondary">{{ job.location }}</span>
-                    </div>
-                    <div class="card-footer bg-transparent">
+<!-- Latest Job Openings Section -->
+<section class="py-5" style="background-color: #f0f8ff;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Latest Job Openings</h2>
+            <p class="lead text-muted">Browse through our most recent opportunities</p>
+        </div>
 
-                        {% if user.is_authenticated %}
-                            <a href="{% url 'job_detail' job.id %}" class="btn btn-primary">View Details</a>
-                        {% else %}
-                            <a href="{% url 'login'  %}" class="btn btn-primary">Please login to view more details</a>
-                        {% endif %}
+        <div class="row">
+            {% for job in jobs %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition">
+                        <div class="card-header bg-white border-0 pb-0 d-flex align-items-center">
+                            {% if job.company.logo %}
+                                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }} logo"
+                                     class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px;">
+                                    <i class="fas fa-building text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ job.company.name }}</h6>
+                                <small class="text-muted">{{ job.location }}</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ job.title }}</h5>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-primary bg-opacity-10 text-primary">{{ job.get_job_type_display }}</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ job.location }}</span>
+                                <span class="badge bg-success bg-opacity-10 text-success">
+                                    Posted {{ job.posted_date|timesince }} ago
+                                </span>
+                            </div>
+                            <p class="card-text text-muted">{{ job.description|truncatewords:25 }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-0 pt-0">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'job_detail' job.id %}" class="btn btn-primary w-100">
+                                    View Details <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">
+                                    Login to Apply <i class="fas fa-lock ms-2"></i>
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% empty %}
-            <div class="col-12">
-
-                <div class="alert alert-info">No job openings at the moment. Please check back later.</div>
-            </div>
-        {% endfor %}
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No job openings at the moment. Please check back later.</div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+</section>
 
 
 <section class="py-5">
@@ -113,36 +147,86 @@
     </div>
 </section>
 
-<section class="py-5">
+<section class="py-5" style="background-color: #f8f9fa;">
     <div class="container">
-        <h2 class="text-center mb-5">What Our Users Say</h2>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <blockquote class="blockquote mb-0">
-                            <p>"Found my dream job within a week of using this platform!"</p>
-                            <footer class="blockquote-footer">Sarah Johnson, <cite>Marketing Manager</cite></footer>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <blockquote class="blockquote mb-0">
-                            <p>"The quality of candidates we've found here is exceptional."</p>
-                            <footer class="blockquote-footer">Michael Chen, <cite>Tech Recruiter</cite></footer>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
+        <h2 class="text-center mb-5 fw-bold" style="color: #2d3748;">What Our Users Say</h2>
+        <div class="row g-4">
+            <!-- Testimonial 1 -->
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <blockquote class="blockquote mb-0">
-                            <p>"User-friendly interface and great customer support."</p>
-                            <footer class="blockquote-footer">David Wilson, <cite>HR Director</cite></footer>
+                <div class="card h-100 border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <blockquote class="blockquote mb-4">
+                            <p class="fst-italic text-muted">"Found my dream job within a week of using this platform!"</p>
+                            <footer class="blockquote-footer mt-3 d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-user text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-bold d-block">Sarah Johnson</span>
+                                    <small class="text-muted">Marketing Manager</small>
+                                </div>
+                            </footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <blockquote class="blockquote mb-4">
+                            <p class="fst-italic text-muted">"The quality of candidates we've found here is exceptional."</p>
+                            <footer class="blockquote-footer mt-3 d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-user text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-bold d-block">Michael Chen</span>
+                                    <small class="text-muted">Tech Recruiter</small>
+                                </div>
+                            </footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <blockquote class="blockquote mb-4">
+                            <p class="fst-italic text-muted">"User-friendly interface and great customer support."</p>
+                            <footer class="blockquote-footer mt-3 d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="fas fa-user text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-bold d-block">David Wilson</span>
+                                    <small class="text-muted">HR Director</small>
+                                </div>
+                            </footer>
                         </blockquote>
                     </div>
                 </div>
